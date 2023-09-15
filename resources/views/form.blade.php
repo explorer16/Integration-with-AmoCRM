@@ -6,7 +6,7 @@
     <link type = "text/css" rel = "stylesheet" href = "{{ asset('css/form.css') }}">
     <script src="{{ asset('js/jquery.3.7.1.min.js') }}"></script>
     
-    <title>F-store</title>
+    <title>Form</title>
 </head>
 <body>
     <div class="login-form">
@@ -49,13 +49,14 @@
 
             $.ajax({
                 type: "POST",
-                url: "{{ route('send') }}",
+                url: "/validate",
                 data: JSON.stringify(formData),
                 contentType: "application/json",
                 dataType: "json",
                 headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
                 success: function(response){
                     console.log("Успешно отправлено: ", response);
+                    window.location.href = "/send";
                 },
                 error: function(error){
                     console.log("Ошибка: ", error);
@@ -63,5 +64,5 @@
             })
         });
     });
-</script>
+</script> 
 </html>

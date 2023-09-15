@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\getToken;
+use App\Http\Controllers\validateController;
 use App\Http\Controllers\SendFormController;
 use Illuminate\Support\Facades\Route;
 
@@ -16,4 +18,6 @@ use Illuminate\Support\Facades\Route;
 
 Route::view('/', 'form');
 
-Route::post('/', [SendFormController::class, 'send'])->name('send');
+Route::post('/validate', [validateController::class, 'validateFormData'])->name('validate');
+Route::get('/send', [SendFormController::class, 'send'])->name('send');
+Route::get('/getToken', [getToken::class, 'get'])->name('getToken');
