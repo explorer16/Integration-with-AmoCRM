@@ -13,7 +13,6 @@ class GetProduct
      */
     static function get($apiClient, &$price) {
         $catalog = $apiClient->catalogs()->get()->getBy('name', 'Товары');
-        $catalogElementsCollection = new CatalogElementsCollection();
         $catalogElementsService = $apiClient->catalogElements($catalog->getId());
         $catalogElementsFilter = new CatalogElementsFilter();
         $catalogElementsCollection = $catalogElementsService->get($catalogElementsFilter);
