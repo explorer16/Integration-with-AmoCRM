@@ -2,11 +2,9 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
-
 use League\OAuth2\Client\Token\AccessToken;
 
-class Token extends Model
+class Token
 {
     /**
      * @param array $accessToken
