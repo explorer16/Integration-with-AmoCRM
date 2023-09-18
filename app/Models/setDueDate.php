@@ -3,20 +3,15 @@
 namespace App\Models;
 
 use DateTime;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
-use Ramsey\Uuid\Converter\Time\UnixTimeConverter;
 
-class setDueDate extends Model
+class SetDueDate
 {
-    use HasFactory;
-
     /**
      * возвращает строку времени в формате unix 
      * через 4 дня (с учётом рабочего времени и дня недели)
      * @return int
      */
-    static function set(){
+    static function set() {
         date_default_timezone_set('Asia/Tashkent');
         $date = new DateTime('+4 days');
         $day = $date->format('l');
@@ -25,7 +20,7 @@ class setDueDate extends Model
         if( $date->format('N') >= 6 ) {
             $day = 'Monday';
         }
-        if(($time < '09:00')||($time > '18:00')) {
+        if(($time < '09:00') || ($time > '18:00')) {
             $time = '10:00';
         }
 

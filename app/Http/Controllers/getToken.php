@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Token;
 
-class getToken extends Controller
+class GetToken extends Controller
 {
     function get()
     {

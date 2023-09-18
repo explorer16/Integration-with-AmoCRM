@@ -42,7 +42,7 @@
                 first_name: $("input[name='first_name']").val(),
                 last_name: $("input[name='last_name']").val(),
                 age: $("input[name='age']").val(),
-                gender: $("input[name='gender']").val(),
+                gender: $("input[name='gender']:checked").val(),
                 telephone: $("input[name='telephone']").val(),
                 email: $("input[name='email']").val()
             }

@@ -2,8 +2,6 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
 use AmoCRM\Models\CustomFieldsValues\MultitextCustomFieldValuesModel;
 use AmoCRM\Models\CustomFieldsValues\NumericCustomFieldValuesModel;
 use AmoCRM\Models\CustomFieldsValues\RadiobuttonCustomFieldValuesModel;
@@ -15,25 +13,22 @@ use AmoCRM\Models\CustomFieldsValues\ValueCollections\RadioButtonCustomFieldValu
 use AmoCRM\Models\CustomFieldsValues\ValueModels\RadiobuttonCustomFieldValueModel;
 use AmoCRM\Collections\CustomFieldsValuesCollection;
 
-class createContact extends Model
+class CreateContact
 {
-    use HasFactory;
-
     /**
      * @param array
      * @param AmoCRM\Models\ContactModel
      * @return \AmoCRM\Collections\CustomFieldsValuesCollection
      */
-
     static function create($contactData, $contact)
     {
-//Добавим имя и фамилию
+        //Добавим имя и фамилию
         $contact->setName($contactData['first_name'] . ' ' . $contactData['last_name']);
         $contact->setFirstName($contactData['first_name']);
         $contact->setLastName($contactData['last_name']);
 
         $customFields = new CustomFieldsValuesCollection();
-//Добавим контакт
+        //Добавим контакт
         $phoneField = (new MultitextCustomFieldValuesModel())->setFieldCode('PHONE');
         
         $customFields->add($phoneField);
@@ -45,7 +40,7 @@ class createContact extends Model
                         ->setValue($contactData['telephone'])
                 )
         );
-//Добавим Email
+        //Добавим Email
         $emailField = (new MultitextCustomFieldValuesModel())->setFieldCode('EMAIL');
                     
         $customFields->add($emailField);
@@ -57,7 +52,7 @@ class createContact extends Model
                         ->setValue($contactData['email'])
                 )
         );
-//Добавим возраст
+        //Добавим возраст
         $ageField = (new NumericCustomFieldValuesModel())->setFieldId(1545569);
                     
         $customFields->add($ageField);
@@ -68,7 +63,7 @@ class createContact extends Model
                         ->setValue(intval($contactData['age']))
                 )
         );
-// Добавим пол
+        // Добавим пол
         $genderField = (new RadiobuttonCustomFieldValuesModel())->setFieldId(1545573);
                 
         $customFields->add($genderField);

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers;
 
 use App\Models\Token;
@@ -7,8 +9,8 @@ use League\OAuth2\Client\Token\AccessTokenInterface;
 use AmoCRM\Models\ContactModel;
 use App\Models\createContact;
 use AmoCRM\Helpers\EntityTypesInterface;
-use AmoCRM\Exceptions\AmoCRMApiException;
 use AmoCRM\Collections\LinksCollection;
+use AmoCRM\Filters\ContactsFilter;
 use AmoCRM\Filters\LeadsFilter;
 use AmoCRM\Models\Customers\CustomerModel;
 use AmoCRM\Models\NoteType\CommonNote;
@@ -19,7 +21,7 @@ class SendFormController extends Controller
 {
     function send()
     {
-        if(session('accessToken')) {
+        if (session('accessToken')) {
             $accessToken = Token::getToken();
         } else {
             return redirect('/getToken');
@@ -50,64 +52,58 @@ class SendFormController extends Controller
 
         $contactData = json_decode(session('formData'), true);
 
-        if(!is_set::contact($contactsCollection, $contactData['telephone'])){
+        if (!is_set::contact($contactsCollection, $contactData['telephone'])) {
             $lead = makeCommonActionsAndReturnLead::do($apiClient);
-//Создаём контакт и заполняем его данными из формы
+            //Создаём контакт и заполняем его данными из формы
             $contact = new ContactModel();
             
             $customFields = createContact::create($contactData, $contact);
             $contact->setCustomFieldsValues($customFields);
 
-//Отправляем контакт на аккаунт
-            try {
-                $contact = $apiClient->contacts()->addOne($contact);
-            } catch (AmoCRMApiException $e) {
-                dd($e);
-            }
-//Подключаем его к сделке и обновляем сделку
+            //Отправляем контакт на аккаунт
+
+            $contact = $apiClient->contacts()->addOne($contact);
+
+            //Подключаем его к сделке и обновляем сделку
             $link = new LinksCollection();
             $link->add($lead);
 
-            try {
-                $contact = $apiClient->contacts()->link($contact, $link);
+            $contact = $apiClient->contacts()->link($contact, $link);
 
-                $apiClient->leads()->updateOne($lead);
-            } catch (AmoCRMApiException $e) {
-                dd($e);
-            }
+            $apiClient->leads()->updateOne($lead);
+
             return redirect('/');
         } else {
+            $contactFilters = new ContactsFilter();
+            $contactFilters->setIds(session('contactId'));
+            $contact = $apiClient->contacts()->get($contactFilters, [EntityTypesInterface::LEADS]);
+            
             $leadFilters = new LeadsFilter();
-            $leadCollection = $apiClient->leads()->get($leadFilters, [EntityTypesInterface::CONTACTS]);
-            if(!is_set::unCompletedLead($leadCollection, session('contactId'))){
-//Создаём покупателя
+            $leadFilters->setIds($contact[0]->getLeads()[0]->getId());
+            $lead = $apiClient->leads()->get($leadFilters, [EntityTypesInterface::CONTACTS]);
+
+            if (!Is_set::unCompletedLead($lead, session('contactId'))) {
+                //Создаём покупателя
                 $customer = new CustomerModel();
 
-                $customer->setName($contactData['first_name'].' '.$contactData['last_name']);
+                $customer->setName($contactData['first_name'] . ' ' . $contactData['last_name']);
 
-                try {
                     $customer = $apiClient->customers()->addOne($customer);
-                } catch (AmoCRMApiException $e) {
-                    dd($e);
-                }
-//Берём уже существующий контакт и присоединяем его к покупателю
+
+                //Берём уже существующий контакт и присоединяем его к покупателю
                 $contact = $apiClient->contacts()->getOne(session('contactId'));
 
                 $link = new LinksCollection();
                 $link->add($contact);
 
-                try {
-                    $apiClient->customers()->link($customer, $link);
-                } catch (AmoCRMApiException $e) {
-                    printError($e);
-                    die;
-                }
-                dump('создан покупатель, привязанный к уже существующему контакту '.$contactData['first_name'].' '.$contactData['last_name']);
+                $apiClient->customers()->link($customer, $link);
+
+                dump('создан покупатель, привязанный к уже существующему контакту ' . $contactData['first_name'] . ' ' . $contactData['last_name']);
                 sleep(3);
 
                 return redirect('/');
             } else {
-//Создаём примечание для сделки
+                //Создаём примечание для сделки
                 $note = new CommonNote();
                 
                 $note->setText('Доделайте в ближайшее время')
@@ -122,12 +118,5 @@ class SendFormController extends Controller
                 return redirect('/');
             }
         }
-
-
-
-        
-
-
-            
     }
 }

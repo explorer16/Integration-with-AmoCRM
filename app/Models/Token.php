@@ -2,19 +2,15 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 use League\OAuth2\Client\Token\AccessToken;
 
 class Token extends Model
 {
-    use HasFactory;
-
     /**
      * @param array $accessToken
      */
-
     static function saveToken($accessToken)
     {
         if (

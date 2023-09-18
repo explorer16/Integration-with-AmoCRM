@@ -2,15 +2,11 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
 use AmoCRM\Collections\CatalogElementsCollection;
 use AmoCRM\Filters\CatalogElementsFilter;
 
-class getProduct extends Model
+class GetProduct
 {
-    use HasFactory;
-
     /**
      * @param \AmoCRM\Client\AmoCRMApiClient
      * @param int 
@@ -22,7 +18,6 @@ class getProduct extends Model
         $catalogElementsFilter = new CatalogElementsFilter();
         $catalogElementsCollection = $catalogElementsService->get($catalogElementsFilter);
 
-
         $product1 = $catalogElementsCollection->getBy('name', 'Ноутбук');
         $product1->setQuantity(1);
         $product2 = $catalogElementsCollection->getBy('name', 'Смартфон');
@@ -31,7 +26,7 @@ class getProduct extends Model
         $price = 0;
 
         foreach([$product1, $product2] as $item){
-            $price+=$item->getCustomFieldsValues()[1]->values[0]->value * $item->getQuantity();
+            $price += $item->getCustomFieldsValues()[1]->values[0]->value * $item->getQuantity();
         }
 
         return [$product1, $product2];

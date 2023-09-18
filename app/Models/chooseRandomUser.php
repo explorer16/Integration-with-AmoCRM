@@ -2,13 +2,8 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
-
-class chooseRandomUser extends Model
+class ChooseRandomUser
 {
-    use HasFactory;
-
     /**
      * @param \AmoCRM\EntitiesServices\Users
      */
@@ -19,6 +14,6 @@ class chooseRandomUser extends Model
         foreach($users as $user){
             $userIds[] = $user->getId();
         }
-         return $userIds[rand()%count($userIds)];
+        return $userIds[rand()%count($userIds)];
     }
 }

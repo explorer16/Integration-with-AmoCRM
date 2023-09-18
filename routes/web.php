@@ -18,6 +18,6 @@ use Illuminate\Support\Facades\Route;
 
 Route::view('/', 'form');
 
-Route::post('/validate', [validateController::class, 'validateFormData'])->name('validate');
+Route::post('/validate', [ValidateController::class, 'validateFormData'])->name('validate');
 Route::get('/send', [SendFormController::class, 'send'])->name('send');
-Route::get('/getToken', [getToken::class, 'get'])->name('getToken');
+Route::get('/getToken', [GetToken::class, 'get'])->name('getToken');
